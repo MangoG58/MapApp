@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/appphoto"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textSize="50dp"
+        android:text="Hello World" />
+
+    <Button
+        android:id="@+id/returnToMapButton"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:onClick="returnToMap"
+        android:text="Move to map" />
+
+    <Button
+        android:id="@+id/addPoint"
+        android:layout_width="wrap_content"
+        android:layout_toLeftOf="@id/returnToMapButton"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:onClick="moveToAddPoint"
+        android:text="Add Point" />
+
+    <Button
+        android:id="@+id/addTrail"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@id/returnToMapButton"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:onClick="moveToAddTrail"
+        android:text="Add Trail" />
+
+
+
+</RelativeLayout>

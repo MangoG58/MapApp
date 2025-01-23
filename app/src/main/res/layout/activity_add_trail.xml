@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".addTrail">
+
+
+    <LinearLayout
+        android:id="@+id/LL1"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/nameText"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:text="Enter location name:" />
+
+        <EditText
+            android:id="@+id/enterName"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:hint="enterName" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LL2"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/LL1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="0dp"
+            android:text="Enter loction description:" />
+
+        <EditText
+            android:id="@+id/enterDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:ems="10"
+            android:inputType="text"
+            android:hint="add description on the point" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/LL2"
+        android:orientation="horizontal">
+
+
+
+        <TextView
+            android:id="@+id/XOutput1"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter loction 1 X cordinate:" />
+
+        <EditText
+            android:id="@+id/XInput1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:hint="number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL4"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/LL3"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/YOutput1"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:text="Enter loction 1 Y cordinate:" />
+
+        <EditText
+            android:id="@+id/YInput1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:inputType="numberDecimal"
+            android:hint="number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL5"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/LL4"
+        android:orientation="horizontal">
+
+
+
+        <TextView
+            android:id="@+id/XOutput2"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:text="Enter loction 2 X cordinate:" />
+
+        <EditText
+            android:id="@+id/XInput2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:inputType="numberDecimal"
+            android:hint="number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL6"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/LL5"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/YOutput2"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:text="Enter loction 2 Y cordinate:" />
+
+        <EditText
+            android:id="@+id/YInput2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:inputType="numberDecimal"
+            android:hint="number" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/addDatabutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/LL6"
+        android:onClick="addData"
+        android:text="addData" />
+
+    <Button
+        android:id="@+id/returnToMapButton"
+        android:layout_width="wrap_content"
+        android:layout_toLeftOf="@id/addDatabutton"
+        android:layout_below="@id/LL6"
+        android:layout_height="wrap_content"
+        android:onClick="returnToMain"
+        android:text="return to main" />
+
+    <Button
+        android:id="@+id/AddMorePointToMapButton"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@id/addDatabutton"
+        android:layout_below="@id/LL6"
+        android:layout_height="wrap_content"
+        android:text="Next Stone" />
+
+</RelativeLayout>
