@@ -55,14 +55,14 @@
             android:text="Enter loction description:" />
 
         <EditText
-                android:id="@+id/enterDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
+            android:id="@+id/enterDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
             android:textStyle="bold"
             android:textColor="@color/black"
-                android:ems="10"
-                android:inputType="text"
-                android:hint="add description on the point" />
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:hint="add description on the point" />
         </LinearLayout>
 
     <LinearLayout
@@ -126,7 +126,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/LL4"
         android:onClick="addData"
-        android:text="addData" />
+        android:text="Add the data" />
 
     <Button
         android:id="@+id/returnToMapButton"
@@ -136,6 +136,15 @@
         android:layout_height="wrap_content"
         android:onClick="returnToMain"
         android:text="return to main" />
+
+    <Button
+        android:id="@+id/addMyLocation"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@id/addDatabutton"
+        android:layout_below="@id/LL4"
+        android:layout_height="wrap_content"
+        android:onClick="addMyLocation"
+        android:text="Add my location cordinates" />
 
 
 

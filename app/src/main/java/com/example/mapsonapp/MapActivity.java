@@ -1,18 +1,23 @@
 package com.example.mapsonapp;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -43,8 +48,12 @@ public class MapActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference SharePointRef;
     DatabaseReference TrailRef;
-    LocationManager locationManager;
-    private MyLocationNewOverlay mLocationOverlay;
+
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+
+    Context context;
 
 
     @Override
@@ -57,6 +66,8 @@ public class MapActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        context = this;
 
         Context ctx = this.getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -81,23 +92,6 @@ public class MapActivity extends AppCompatActivity {
 
 
 
-      /*  if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION, android.
-                        listener = new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {}*/
-/*
-                if(marker != null)
-                {
-                    marker.remove();
-                }
-*/
-/*    }
-}
-        */
-
-
             //marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
         //    @Override
         //    public boolean onMarkerClick(Marker marker, MapView mapView) {
@@ -107,19 +101,13 @@ public class MapActivity extends AppCompatActivity {
         //    }
         //});
 
-        //mapView1.getOverlays().add(marker);
 
 
 
-        Location userLoction = new Location(LocationManager.GPS_PROVIDER);
-        GeoPoint userCord = new GeoPoint(userLoction.getLatitude(),userLoction.getLongitude());
-        Marker marker = new Marker(mapView1);
-        marker.setPosition(userCord);
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setTitle("your location");
-        mapView1.getOverlays().add(marker);
 
     }
+
+
 
     @Override
     protected void onResume() {

@@ -1,6 +1,12 @@
 package com.example.mapsonapp;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,6 +36,9 @@ public class addpoint extends AppCompatActivity {
     private EditText M_YCordinate;
     private double  xCoordinate;
     private double  yCoordinate;
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +94,52 @@ public class addpoint extends AppCompatActivity {
     public void returnToMain(View view) {
         Intent myIntent = new Intent(addpoint.this, MainActivity.class);
         startActivity(myIntent);
+    }
+    public void addMyLocation(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                M_XCordinate = (EditText) findViewById(R.id.XInput);
+                M_YCordinate = (EditText) findViewById(R.id.YInput);
+                // This method is called when the location is updated
+                xCoordinate =location.getLatitude();
+                yCoordinate =location.getLongitude();
+                M_XCordinate.setText( "" + xCoordinate);
+                M_YCordinate.setText( "" + yCoordinate);
+                Toast.makeText(addpoint.this, "Location: " + xCoordinate + ", " + yCoordinate, Toast.LENGTH_LONG).show();
+
+            }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                // You can handle provider status changes here if needed
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                // This is called when the GPS provider is enabled
+                Toast.makeText(addpoint.this,"GPS provider is enabled" , Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                // This is called when the GPS provider is disabled
+                Toast.makeText(addpoint.this,"GPS provider is disabled" , Toast.LENGTH_LONG).show();
+
+            }
+        };
+
+        // Check if location permissions are granted, and request location updates
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 1, locationListener);
+            // For GPS provider, you could use LocationManager.GPS_PROVIDER instead
+            // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+        } else {
+            // Handle the case where permission is not granted
+            // You need to request permission from the user (e.g., using ActivityCompat.requestPermissions)
+        }
+
     }
 
 }

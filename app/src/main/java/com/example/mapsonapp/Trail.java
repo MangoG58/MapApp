@@ -29,4 +29,7 @@ public class Trail extends SharePoint {
     public void setTrail(ArrayList<MyGeoPoint> trail) {
         this.trail = trail;
     }
+    public void addCord(double latitude, double longitude){
+        trail.add((new MyGeoPoint(latitude,longitude)));
+    }
 }

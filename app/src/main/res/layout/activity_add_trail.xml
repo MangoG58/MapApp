@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="text"
-            android:hint="enterName" />
+            android:hint="Enter Name" />
     </LinearLayout>
 
 
@@ -57,7 +57,7 @@
             android:textStyle="bold"
             android:textColor="@color/black"
             android:ems="10"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:hint="add description on the point" />
     </LinearLayout>
 
@@ -187,11 +187,12 @@
         android:text="return to main" />
 
     <Button
-        android:id="@+id/AddMorePointToMapButton"
+        android:id="@+id/recordTrail"
         android:layout_width="wrap_content"
         android:layout_toRightOf="@id/addDatabutton"
         android:layout_below="@id/LL6"
         android:layout_height="wrap_content"
-        android:text="Next Stone" />
+        android:onClick="recordTrail"
+        android:text="Record Trail" />
 
 </RelativeLayout>
