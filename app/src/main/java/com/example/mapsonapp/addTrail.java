@@ -1,13 +1,17 @@
 package com.example.mapsonapp;
 
+import static com.example.mapsonapp.addpoint.bitmapToBase64;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -33,6 +39,8 @@ public class addTrail extends AppCompatActivity {
     DatabaseReference myRef;
     private TextView M_XOutput1;
     private TextView M_YOutput1;
+    private TextView M_CameraInfo;
+
 
     private EditText M_Name;
     private EditText M_Description;
@@ -51,6 +59,21 @@ public class addTrail extends AppCompatActivity {
     private boolean flag = false;
     private boolean stopRecordFlag = false;
 
+    private TextView NameRef;
+
+
+    Button btnpicture;
+    Bitmap cameraCapture;
+    private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Bitmap imageBitmap = (Bitmap) result.getData().getExtras().get("data");
+                    cameraCapture = imageBitmap;
+                    M_CameraInfo.setVisibility(View.VISIBLE);
+                }
+            });
+
 
     private Button M_StopRecording;
     @Override
@@ -63,6 +86,26 @@ public class addTrail extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        M_CameraInfo = findViewById(R.id.cameraInput);
+        M_CameraInfo.setVisibility(View.INVISIBLE);
+
+
+        NameRef = findViewById(R.id.showUser);
+        NameRef.setText("User: " + MainActivity.sUser.getUsername());
+
+        btnpicture = findViewById(R.id.openCamera);
+        btnpicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                cameraLauncher.launch(cameraIntent);
+
+            }
+        });
+
     }
     public void addData(View view)    {
         // Initialize EditText fields
@@ -79,11 +122,16 @@ public class addTrail extends AppCompatActivity {
         yCoordinate2 = Double.parseDouble(M_YCordinate2.getText().toString());
 
 
+        String photo;
+        if(cameraCapture == null)
+            photo = "none";
+        else photo = bitmapToBase64(cameraCapture);
+
         // Initialize Firebase database reference
         database = FirebaseDatabase.getInstance();
         final DatabaseReference TrailRef = database.getReference("Trail");
 
-        final Trail trail = new Trail(M_Name.getText().toString(),M_Description.getText().toString(),xCoordinate1 , yCoordinate1,xCoordinate2 , yCoordinate2);
+        final Trail trail = new Trail(M_Name.getText().toString(),M_Description.getText().toString(),xCoordinate1 , yCoordinate1,xCoordinate2 , yCoordinate2, photo, MainActivity.sUser.getUsername());
         TrailRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -111,8 +159,8 @@ public class addTrail extends AppCompatActivity {
 
     }
 
-    public void returnToMain(View view) {
-        Intent myIntent = new Intent(addTrail.this, MainActivity.class);
+    public void returnToMap(View view) {
+        Intent myIntent = new Intent(addTrail.this, MapActivity.class);
         startActivity(myIntent);
     }
     public void recordTrail(View view){
@@ -168,16 +216,24 @@ public class addTrail extends AppCompatActivity {
                         // Initialize Firebase database reference
                         database = FirebaseDatabase.getInstance();
                         final DatabaseReference TrailRef = database.getReference("Trail");
+                        final DatabaseReference UserTrailRef = database.getReference("Users").child(MainActivity.sUser.getUsername()).child("UserTrails");
 
-                        final Trail trail = new Trail(M_Name.getText().toString(), M_Description.getText().toString(), xCoordinate1, yCoordinate1, xCoordinate2, yCoordinate2);
+                        String photo;
+                        if(cameraCapture == null)
+                            photo = "none";
+                        else photo = bitmapToBase64(cameraCapture);
+
+                        final Trail trail = new Trail(M_Name.getText().toString(), M_Description.getText().toString(), xCoordinate1, yCoordinate1, xCoordinate2, yCoordinate2, photo, MainActivity.sUser.getUsername());
                         TrailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.child(trail.getName()).exists()) {     //check if a child with the username already exists
-                                    Toast.makeText(addTrail.this, "the trail name is already exist, change it", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(addTrail.this, "the trail name already exists, change it!", Toast.LENGTH_SHORT).show();
                                     flag = true;
                                 } else {
                                     TrailRef.child(trail.getName()).setValue(trail);
+                                    UserTrailRef.child(trail.getName()).setValue(trail);
+
                                     //create a new child with name of username and set it value to user object
                                 }
                             }
@@ -194,6 +250,8 @@ public class addTrail extends AppCompatActivity {
                         M_YCordinate2.setText("" + yCoordinate);
                         database = FirebaseDatabase.getInstance();
                         final DatabaseReference TrailRef = database.getReference("Trail");
+                        final DatabaseReference UserTrailRef = database.getReference("Users").child(MainActivity.sUser.getUsername()).child("UserTrails");
+
                         TrailRef.child(M_Name.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -202,6 +260,8 @@ public class addTrail extends AppCompatActivity {
                                     if (trail != null) {
                                         trail.addCord(xCoordinate, yCoordinate); // Modify the object
                                         TrailRef.child(trail.getName()).setValue(trail);
+                                        UserTrailRef.child(trail.getName()).setValue(trail);
+
                                     }
                                 }
                             }
