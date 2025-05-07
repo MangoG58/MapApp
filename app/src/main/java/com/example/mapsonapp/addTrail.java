@@ -1,5 +1,6 @@
 package com.example.mapsonapp;
 
+import static com.example.mapsonapp.MainActivity.AlertDialogGeneral;
 import static com.example.mapsonapp.addpoint.bitmapToBase64;
 
 import android.Manifest;
@@ -15,6 +16,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +41,6 @@ public class addTrail extends AppCompatActivity {
     DatabaseReference myRef;
     private TextView M_XOutput1;
     private TextView M_YOutput1;
-    private TextView M_CameraInfo;
 
 
     private EditText M_Name;
@@ -61,7 +62,7 @@ public class addTrail extends AppCompatActivity {
 
     private TextView NameRef;
 
-
+    private ImageView M_CameraInfo;
     Button btnpicture;
     Bitmap cameraCapture;
     private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
@@ -70,6 +71,7 @@ public class addTrail extends AppCompatActivity {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Bitmap imageBitmap = (Bitmap) result.getData().getExtras().get("data");
                     cameraCapture = imageBitmap;
+                    M_CameraInfo.setImageBitmap(imageBitmap);
                     M_CameraInfo.setVisibility(View.VISIBLE);
                 }
             });
@@ -137,11 +139,11 @@ public class addTrail extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.child(trail.getName()).exists())     //check if a child with the username already exists
-                    Toast.makeText(addTrail.this, "the Trail name is already exist", Toast.LENGTH_SHORT).show();
+                    AlertDialogGeneral(addTrail.this,"ok" ,"the Trail name is already exist");
                 else {
                     TrailRef.child(trail.getName()).setValue(trail);
                     //create a new child with name of username and set it value to user object
-                    Toast.makeText(addTrail.this,"Trail added successfuly",Toast.LENGTH_SHORT).show();
+                    AlertDialogGeneral(addTrail.this,"ok" ,"Trail added successfully");
                     M_Name.setText("");
                     M_Description.setText("");
                     M_XCordinate1.setText("");
@@ -182,7 +184,7 @@ public class addTrail extends AppCompatActivity {
         M_YCordinate2 = (EditText) findViewById(R.id.YInput2);
 
         if(M_Name.getText().toString().equals("")||M_Description.getText().toString().equals("")){
-            Toast.makeText(addTrail.this, "Name or Description not entered, Please enter", Toast.LENGTH_LONG).show();
+            AlertDialogGeneral(addTrail.this,"ok" ,"Name or Description not entered, Please enter");
             M_Name.setText("");
             M_Description.setText("");
             M_XCordinate1.setText("");
@@ -243,7 +245,7 @@ public class addTrail extends AppCompatActivity {
 
                             }
                         });
-                        if (flag) return;
+                        //if (flag) return;
                     }
                     if (time > 1) {
                         M_XCordinate2.setText("" + xCoordinate);

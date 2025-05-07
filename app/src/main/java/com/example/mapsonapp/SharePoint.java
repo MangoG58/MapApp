@@ -1,44 +1,39 @@
 package com.example.mapsonapp;
 
-import android.widget.ImageView;
-
-import org.osmdroid.util.GeoPoint;
-
-import java.util.ArrayList;
 
 public class SharePoint {
-    protected String Name;
-    protected String  CreatorName;
+    protected String name;
+    protected String  creatorName;
     protected MyGeoPoint placement;
-    protected String Text;
-    protected String Photo;
+    protected String text;
+    protected String photo;
 
     public SharePoint() {}
 
 
     public SharePoint(String name, String text, double x, double y, String photo, String creatorName) {
-        this.Name = name;
-        this.Text = text;
-        this.Photo = photo;
+        this.name = name;
+        this.text = text;
+        this.photo = photo;
         this.placement = new MyGeoPoint(x,y);
-        this.CreatorName = creatorName;
+        this.creatorName = creatorName;
     }
 
 
     public String getCreatorName() {
-        return CreatorName;
+        return creatorName;
     }
 
     public void setCreatorName(String creatorName) {
-        CreatorName = creatorName;
+        this.creatorName = creatorName;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
 
@@ -51,18 +46,18 @@ public class SharePoint {
     }
 
     public String getText() {
-        return Text;
+        return text;
     }
 
     public void setText(String text) {
-        Text = text;
+        this.text = text;
     }
 
     public String getPhoto() {
-        return Photo;
+        return photo;
     }
 
     public void setPhoto(String photo) {
-        Photo = photo;
+        this.photo = photo;
     }
 }

@@ -1,13 +1,8 @@
 package com.example.mapsonapp;
 
-import android.widget.ImageView;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
-import java.util.List;
-
 public class Trail extends SharePoint {
     protected ArrayList<MyGeoPoint> trail;
 

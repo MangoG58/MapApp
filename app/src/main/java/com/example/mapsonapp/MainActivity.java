@@ -24,8 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static EditText UserName;
-    public static EditText Password;
+    public EditText UserName;
+    public EditText Password;
     static User sUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

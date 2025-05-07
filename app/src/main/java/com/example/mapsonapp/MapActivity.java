@@ -96,29 +96,6 @@ public class MapActivity extends AppCompatActivity {
             return insets;
         });
 
-        Spinner mySpinner = findViewById(R.id.mySpinner);
-
-        // Example list of items
-        String[] options = {"Add Point", "Add Trail"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, options);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mySpinner.setAdapter(adapter);
-        // Handle selection
-        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItem = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getApplicationContext(), "Selected: " + selectedItem, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Optional: handle when no item is selected
-            }
-        });
-
-
 
 
 
@@ -265,25 +242,6 @@ public class MapActivity extends AppCompatActivity {
         //Show User communities points
 
         createComm();
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        if(comms == null)
-            AlertDialogGeneral(MapActivity.this,"ok","comm is null");
-        else
-            AlertDialogGeneral(MapActivity.this,"ok","comm is not null");
-
-
-        users = createUsers(comms);
-        if(users == null)
-            AlertDialogGeneral(MapActivity.this,"ok","users is null");
-        else  AlertDialogGeneral(MapActivity.this,"ok","users is not null");
-
 
         if(users != null)
             for(String userName: users){

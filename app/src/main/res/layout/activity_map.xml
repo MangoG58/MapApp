@@ -82,17 +82,6 @@
         android:layout_height="wrap_content"
         android:onClick="onClickJoinCommunity"
         android:text="Join Community" />
-    <Spinner
-        android:id="@+id/mySpinner"
-        android:layout_width="wrap_content"
-        android:layout_below="@id/JoinCommunity"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:spinnerMode="dropdown"
-        android:enabled="true"
-        android:clickable="true"
-        />
 
 
 </RelativeLayout>

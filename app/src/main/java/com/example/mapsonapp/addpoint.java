@@ -19,6 +19,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,7 @@ public class addpoint extends AppCompatActivity {
     DatabaseReference myRef;
 
     private TextView NameRef;
-    private TextView M_CameraInfo;
+    private ImageView M_CameraInfo;
 
     private EditText M_Name;
     private EditText M_Description;
@@ -60,12 +61,14 @@ public class addpoint extends AppCompatActivity {
 
     Button btnpicture;
     Bitmap cameraCapture;
+
     private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Bitmap imageBitmap = (Bitmap) result.getData().getExtras().get("data");
                     cameraCapture = imageBitmap;
+                    M_CameraInfo.setImageBitmap(imageBitmap);
                     M_CameraInfo.setVisibility(View.VISIBLE);
                 }
             });
