@@ -83,5 +83,20 @@
         android:onClick="onClickJoinCommunity"
         android:text="Join Community" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/JoinCommunity"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:text="" />
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/JoinCommunity"
+        android:layout_height="wrap_content"
+        android:onClick="onClickContinue"
+        android:text="cont" />
+
 
 </RelativeLayout>

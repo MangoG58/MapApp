@@ -3,6 +3,8 @@ package com.example.mapsonapp;
 import static com.example.mapsonapp.MainActivity.AlertDialogGeneral;
 import static com.example.mapsonapp.MainActivity.sUser;
 
+import static java.lang.Thread.sleep;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -64,12 +66,13 @@ import java.util.prefs.PreferencesFactory;
 
 public class MapActivity extends AppCompatActivity {
 
+    ArrayList<String> UserComm = new ArrayList<>();
     ArrayList<String> users = new ArrayList<>();
-    ArrayList<String> comms = new ArrayList<>();
 
     private Marker myLocation;
 
     private TextView NameRef;
+    private TextView testRef;
     private EditText M_Community_Name;
     private TextView M_CommunityPass;
 
@@ -198,6 +201,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void buildMap() {
+        CreateCommList();
         //Show user location
         findMyLocation();
 
@@ -214,7 +218,7 @@ public class MapActivity extends AppCompatActivity {
                     GeoPoint startPoint = new GeoPoint(point.getPlacement().getLatitude(), point.getPlacement().getLongitude());
                     marker.setPosition(startPoint);
                     marker.setTitle(point.getName());
-                    marker.setSubDescription(point.getText() + "\t\t\t Source: " + point.getCreatorName());
+                    marker.setSubDescription(point.getText() + "\t\t\t  Source: " + point.getCreatorName());
                     marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
                     Drawable drawable = ContextCompat.getDrawable(context, R.drawable.dote4);
                     marker.setIcon(drawable);
@@ -230,79 +234,9 @@ public class MapActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-
-
-
-
-        //Show User communities points
-
-        createComm();
-
-        if(users != null)
-            for(String userName: users){
-                DatabaseReference UsersPointsRef = database.getReference("Users").child(userName).child("UserPoints");
-                UsersPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot snap :snapshot.getChildren()) {
-                            SharePoint point = snap.getValue(SharePoint.class);
-
-                            //set on map
-                            Marker marker = new Marker(mapView1);
-                            GeoPoint startPoint = new GeoPoint(point.getPlacement().getLatitude(), point.getPlacement().getLongitude());
-                            marker.setPosition(startPoint);
-                            marker.setTitle(point.getName());
-                            marker.setSubDescription(point.getText());
-                            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                            Drawable drawable = ContextCompat.getDrawable(context, R.drawable.dote1);
-                            marker.setIcon(drawable);
-                            //if(point.getPhotos() != null){}
-                            //Drawable drawable2 = ContextCompat.getDrawable(context, R.drawable.pointphoto );
-                            //marker.setImage(drawable2);
-                            mapView1.getOverlays().add(marker);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-
-
-
-       /* SharePointRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snap :dataSnapshot.getChildren()) {
-                    SharePoint point = snap.getValue(SharePoint.class);
-
-                    //set on map
-                    Marker marker = new Marker(mapView1);
-                    GeoPoint startPoint = new GeoPoint(point.getPlacement().getLatitude(), point.getPlacement().getLongitude()); // Example: Park Hamoshava
-                    marker.setPosition(startPoint);
-                    marker.setTitle(point.getName());
-                    marker.setSubDescription(point.getText());
-                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                    Drawable drawable = ContextCompat.getDrawable(context, R.drawable.dote1);
-                    marker.setIcon(drawable);
-                    //if(point.getPhotos() != null){}
-                    //Drawable drawable2 = ContextCompat.getDrawable(context, R.drawable.pointphoto );
-                    //marker.setImage(drawable2);
-                    mapView1.getOverlays().add(marker);
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
-        TrailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        //Show User own Trails(Working)
+        final DatabaseReference UserTrailsRef = database.getReference("Users").child(MainActivity.sUser.getUsername()).child("UserTrails");
+        UserTrailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap :snapshot.getChildren()) {
@@ -314,7 +248,60 @@ public class MapActivity extends AppCompatActivity {
                     marker.setPosition(startPoint);
                     marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
                     marker.setTitle(trail.getName() + ".trail");
-                    marker.setSubDescription(trail.getText());
+                    marker.setSubDescription(trail.getText() + "\t\t\t Source: "+ trail.getCreatorName());
+                    Drawable drawable = ContextCompat.getDrawable(context, R.drawable.dote1);
+                    marker.setIcon(drawable);
+                    if(!(trail.getPhoto().equals("none"))){
+                        Drawable drawable2 = base64ToDrawable(context ,trail.getPhoto());
+                        marker.setImage(drawable2);
+                    }
+                    mapView1.getOverlays().add(marker);
+                    // Create the Polyline
+                    List<GeoPoint> points = new ArrayList<>();
+                    for (MyGeoPoint P: trail.getTrail() ) {
+                        points.add(new GeoPoint(P.getLatitude(), P.getLongitude()));
+                    }
+                    Polyline polyline = new Polyline();
+                    polyline.setPoints(points);
+                    polyline.setColor(0xFF800080); // purple color
+                    polyline.setWidth(10.0f); // Line width
+                    // Add the Polyline to the map
+                    mapView1.getOverlayManager().add(polyline);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+
+
+
+
+        //Show User communities points
+
+
+
+
+        /*TrailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap :snapshot.getChildren()) {
+                    Trail trail = snap.getValue(Trail.class);
+
+                    //set on map
+                    Marker marker = new Marker(mapView1);
+                    GeoPoint startPoint = new GeoPoint(trail.getPlacement().getLatitude(), trail.getPlacement().getLongitude());
+                    marker.setPosition(startPoint);
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    marker.setTitle(trail.getName() + ".trail");
+                    marker.setSubDescription(trail.getText() + "\t\t\t Source: "+ trail.getText());
                     Drawable drawable = ContextCompat.getDrawable(context, R.drawable.dote4);
                     marker.setIcon(drawable);
                     if(!(trail.getPhoto().equals("none"))){
@@ -322,7 +309,6 @@ public class MapActivity extends AppCompatActivity {
                         marker.setImage(drawable2);
                     }
                     mapView1.getOverlays().add(marker);
-
                     // Create the Polyline
                    List<GeoPoint> points = new ArrayList<>();
                     for (MyGeoPoint P: trail.getTrail() ) {
@@ -341,7 +327,7 @@ public class MapActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
     }
     public static Drawable base64ToDrawable(Context context, String base64String) {
         try {
@@ -353,28 +339,23 @@ public class MapActivity extends AppCompatActivity {
             return null; // Return null if decoding fails
         }
     }
-    public void createComm()
+    public void CreateCommList()
     {
-
-
-
-      //  ArrayList<String> comm = new ArrayList<>();
-        final DatabaseReference CommNamesRef = database.getReference("Users").child(MainActivity.sUser.getUsername()).child("CommNames");
-        CommNamesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        final DatabaseReference UserCommRef = database.getReference("Users").child(MainActivity.sUser.getUsername()).child("CommNames");
+        UserCommRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int i=0;
-                for(DataSnapshot s:snapshot.getChildren())
+                for(DataSnapshot snap : snapshot.getChildren())
                 {
-                    i++;
-
-                    comms.add(s.getValue(String.class));
-                    i++;
-
+                    String name = snap.getValue(String.class);
+                    UserComm.add(name);
+                    testRef = findViewById(R.id.textView);
+                    String s = testRef.getText().toString();
+                    testRef.setText(s + "\t" + name);
                 }
-                //read function continue
-
+                CreateUserList();
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -382,40 +363,130 @@ public class MapActivity extends AppCompatActivity {
             }
         });
     }
-    public ArrayList<String> createUsers(ArrayList<String> comms)
-    {
-        ArrayList<String> users = new ArrayList<>();
-        DatabaseReference CommsRef = database.getReference("Communities");
-        for(String commName : comms)
-            CommsRef.child(commName).child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
+    public void CreateUserList() {
+        testRef = findViewById(R.id.textView);
+        testRef.setText("");
+        for(String s: UserComm)
+        {
+            final DatabaseReference CommUserRef = database.getReference("Communities").child(s).child("Users");
+            CommUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot snap :snapshot.getChildren()) {
-                        String userName = snap.getValue(String.class);
-                        if((userName.equals(sUser.getUsername())||isExist(users, userName)))
-                            users.add(userName);
-                    }
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    for(DataSnapshot snap : snapshot.getChildren())
+                    {
+                        String name = snap.getValue(String.class);
+                        if(!isExist(users, name))
+                        {
+                            if(!name.equals(sUser.getUsername()))
+                            {
+                                users.add(name);
+                                ShowUserPointsAndTrails(name);
+                                /*testRef = findViewById(R.id.textView);
+                                String st = testRef.getText().toString();
+                                testRef.setText(st + "\t" + name);*/
+                            }
+                        }
+
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
-        return users;
+
+        }
+
+
     }
+    public void ShowUserPointsAndTrails(String user) {
+
+            final DatabaseReference CommUserPointsRef = database.getReference("Users").child(user).child("UserPoints");
+            CommUserPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot snap :snapshot.getChildren()) {
+                        SharePoint point = snap.getValue(SharePoint.class);
+
+                        //set on map
+                        Marker marker = new Marker(mapView1);
+                        GeoPoint startPoint = new GeoPoint(point.getPlacement().getLatitude(), point.getPlacement().getLongitude());
+                        marker.setPosition(startPoint);
+                        marker.setTitle(point.getName());
+                        marker.setSubDescription(point.getText() + "\t\t\t  Source: " + point.getCreatorName());
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.dote2);
+                        marker.setIcon(drawable);
+                        if(!(point.getPhoto().equals("none"))){
+                            Drawable drawable2 = base64ToDrawable(context ,point.getPhoto());
+                            marker.setImage(drawable2);
+                        }
+                        mapView1.getOverlays().add(marker);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+            final DatabaseReference CommUserTrailsRef = database.getReference("Users").child(user).child("UserTrails");
+            CommUserTrailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot snap :snapshot.getChildren()) {
+                        Trail trail = snap.getValue(Trail.class);
+
+                        //set on map
+                        Marker marker = new Marker(mapView1);
+                        GeoPoint startPoint = new GeoPoint(trail.getPlacement().getLatitude(), trail.getPlacement().getLongitude());
+                        marker.setPosition(startPoint);
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        marker.setTitle(trail.getName() + ".trail");
+                        marker.setSubDescription(trail.getText() + "\t\t\t Source: "+ trail.getCreatorName());
+                        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.dote1);
+                        marker.setIcon(drawable);
+                        if(!(trail.getPhoto().equals("none"))){
+                            Drawable drawable2 = base64ToDrawable(context ,trail.getPhoto());
+                            marker.setImage(drawable2);
+                        }
+                        mapView1.getOverlays().add(marker);
+                        // Create the Polyline
+                        List<GeoPoint> points = new ArrayList<>();
+                        for (MyGeoPoint P: trail.getTrail() ) {
+                            points.add(new GeoPoint(P.getLatitude(), P.getLongitude()));
+                        }
+                        Polyline polyline = new Polyline();
+                        polyline.setPoints(points);
+                        polyline.setColor(0xFFFFA500); // Orange color
+                        polyline.setWidth(10.0f); // Line width
+                        // Add the Polyline to the map
+                        mapView1.getOverlayManager().add(polyline);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
+        }
+
+
+
+    //public void onClickContinue(View view){   ShowCommPointsAndTrails();  }
     public void returnToMain(View view) {
         Intent myIntent = new Intent(MapActivity.this, MainActivity.class);
         startActivity(myIntent);
     }
 
     public void moveToAddPoint(View view) {
-        Intent myIntent = new Intent(this, addpoint.class);
-        startActivity(myIntent);
+        CreateUserList();
+       /* Intent myIntent = new Intent(this, addpoint.class);
+        startActivity(myIntent);*/
     }
     public void moveToAddTrail(View view) {
         Intent myIntent = new Intent(this, addTrail.class);
